@@ -32,13 +32,20 @@ A lightweight VS Code extension that displays route path annotations above Larav
 Given this routes file:
 
 ```php
+// web.php
+
 <?php
 
-Route::get('/users', [UserController::class, 'index']);
-Route::post('/users', [UserController::class, 'store']);
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProfileController;
 
-Route::group(['prefix' => 'api'], function () {
-    Route::get('/posts/{id}', [PostController::class, 'show']);
+Route::get('/', [HomeController::class, 'index']);
+Route::get('/about', [HomeController::class, 'about']);
+
+Route::group(['prefix' => 'user'], function () {
+    Route::get('/profile', [ProfileController::class, 'show']);
+    Route::post('/profile', [ProfileController::class, 'update']);
 });
 ```
 
@@ -47,14 +54,54 @@ The extension will display:
 ```php
 <?php
 
-🧩 Route Path: /users
-Route::get('/users', [UserController::class, 'index']);
-🧩 Route Path: /users
-Route::post('/users', [UserController::class, 'store']);
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProfileController;
 
-Route::group(['prefix' => 'api'], function () {
-    🧩 Route Path: /api/posts/{id}
+Route::get('/', [HomeController::class, 'index']); 🧩 /
+Route::get('/about', [HomeController::class, 'about']); 🧩 /about
+
+Route::group(['prefix' => 'user'], function () {
+    Route::get('/profile', [ProfileController::class, 'show']); 🧩 /user/profile
+    Route::get('/profile/{profile_id}', [ProfileController::class, 'show']); 🧩 /user/profile/{profile_id}
+});
+```
+
+```php
+// api.php
+
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\PostController;
+
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
+
+Route::group(['prefix' => 'v1', 'middleware' => ['auth:sanctum']], function () {
+    Route::get('/posts', [PostController::class, 'index']);
     Route::get('/posts/{id}', [PostController::class, 'show']);
+    Route::post('/posts', [PostController::class, 'store']);
+});
+```
+
+The extension will display:
+
+```php
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\PostController;
+
+Route::post('/login', [AuthController::class, 'login']); 🧩 /api/login
+Route::post('/register', [AuthController::class, 'register']); 🧩 /api/register
+
+Route::group(['prefix' => 'v1', 'middleware' => ['auth:sanctum']], function () {
+    Route::get('/posts', [PostController::class, 'index']); 🧩 /api/v1/posts
+    Route::get('/posts/{id}', [PostController::class, 'show']); 🧩 /api/v1/posts/{id}
+    Route::post('/posts', [PostController::class, 'store']); 🧩 /api/v1/posts
 });
 ```
 
