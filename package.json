@@ -2,7 +2,7 @@
     "name": "laravel-route-annotations",
     "displayName": "Laravel Route Annotations",
     "description": "Shows route path annotations for Laravel routes in routes/web.php",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "engines": {
         "vscode": "^1.74.0"
     },
